@@ -7,6 +7,7 @@ const { randomUUID } = require('node:crypto');
 const { scaleToGrams, sumTotals } = require('./calories');
 const { validateEntry } = require('./validate');
 const store = require('./store');
+const telemetry = require('./telemetry');
 
 const PUBLIC = path.join(__dirname, '..', 'public');
 
@@ -35,7 +36,18 @@ function readBody(req) {
 function createServer() {
   return http.createServer(async (req, res) => {
     const url = new URL(req.url, 'http://localhost');
+    const t0 = process.hrtime.bigint();
+    res.on('finish', () => {
+      const ms = Number(process.hrtime.bigint() - t0) / 1e6;
+      if (url.pathname !== '/api/metrics') telemetry.record(req.method, url.pathname, res.statusCode, ms);
+    });
     try {
+      if (req.method === 'GET' && url.pathname === '/healthz') {
+        return send(res, 200, { status: 'ok' });
+      }
+      if (req.method === 'GET' && url.pathname === '/api/metrics') {
+        return send(res, 200, telemetry.snapshot());
+      }
       if (req.method === 'GET' && url.pathname === '/api/foods') {
         return send(res, 200, store.loadFoods());
       }

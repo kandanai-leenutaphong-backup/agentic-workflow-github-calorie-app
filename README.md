@@ -11,7 +11,7 @@ npm start        # http://localhost:3000
 npm test
 ```
 
-API: `GET /api/foods`, `GET /api/entries?date=YYYY-MM-DD`, `POST /api/entries {food, grams, date?}`, `DELETE /api/entries/:id`.
+API: `GET /healthz`, `GET /api/metrics`, `GET /api/foods`, `GET /api/entries?date=YYYY-MM-DD`, `POST /api/entries {food, grams, date?}`, `DELETE /api/entries/:id`.
 Entries are stored in `data/entries.json` (git-ignored). Seed foods are in `data/foods.json` (per 100 g).
 
 ## Agentic workflows
@@ -33,7 +33,22 @@ Slash commands are routed by `agentic_commands.yml` (generated).
 | `agentic-repo-status` | daily | upbeat repo status report issue |
 | `agentic-security-review` | PR, weekly | inline security review of PRs; weekly repo scan issue |
 | `agentic-idea-suggester` | weekly, `/ideas` | proposes 3 new well-scoped feature issues |
+| `agentic-deep-research` | weekly, `/research` | reads prod telemetry + repo, files `cookie` issues |
 | `agentic-cost-tracker` | after agent runs | AI credit spend report |
+
+### Research - Assign - Observe feedback loop
+
+```
+Observe: telemetry-collect.yml (3 simulated prod envs -> /api/metrics artifacts)
+   ^                                                      |
+   | deploy / merge                          query telemetry
+Developer <- iterates <- Copilot <- agentic-issue-monster <- (label: cookie) <- agentic-deep-research
+```
+
+1. `telemetry-collect.yml` (plain Actions, every 6h, after CI) runs the app per environment (`prod-1..3`) and uploads `telemetry-prod-N` artifacts.
+2. `agentic-deep-research` downloads them, researches the repo, and opens up to 3 `[research]` issues labelled `cookie`.
+3. `agentic-issue-monster` assigns `cookie` issues to the Copilot coding agent, which opens PRs; the developer reviews and iterates.
+4. Merged changes show up in the next telemetry run, closing the loop. Try it: `gh workflow run telemetry-collect.yml` then `gh aw run agentic-deep-research`.
 
 ### Authentication
 

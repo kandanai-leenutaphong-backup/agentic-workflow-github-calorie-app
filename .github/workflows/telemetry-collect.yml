@@ -1,0 +1,37 @@
+name: Telemetry Collect
+
+# "Observe" stage of the Research - Assign - Observe loop: collect telemetry from
+# each simulated prod environment and publish it as an artifact for agentic-deep-research.
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  collect:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        env: [prod-1, prod-2, prod-3]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node scripts/collect-telemetry.js
+        env:
+          TELEMETRY_ENV: ${{ matrix.env }}
+          TELEMETRY_REQUESTS: 60
+      - uses: actions/upload-artifact@v4
+        with:
+          name: telemetry-${{ matrix.env }}
+          path: telemetry/${{ matrix.env }}.json
+          retention-days: 14

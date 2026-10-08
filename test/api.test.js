@@ -36,3 +36,16 @@ test('add, list and delete an entry', async (t) => {
 
   assert.equal((await fetch(`${base}/api/entries/${entry.id}`, { method: 'DELETE' })).status, 204);
 });
+
+test('metrics endpoint reports request counts and errors', async (t) => {
+  const server = createServer().listen(0);
+  t.after(() => server.close());
+  const base = `http://localhost:${server.address().port}`;
+  await fetch(`${base}/healthz`);
+  await fetch(`${base}/api/entries`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ food: 'Apple', grams: 0 }),
+  });
+  const m = await (await fetch(`${base}/api/metrics`)).json();
+  assert.ok(m.routes['GET /healthz'].count >= 1);
+  assert.ok(m.routes['POST /api/entries'].errors4xx >= 1);
+});
