@@ -31,6 +31,8 @@ Slash commands are routed by `agentic_commands.yml` (generated).
 | `agentic-daily-perf-improver` | daily, `/perf-assist` | finds and benchmarks perf fixes |
 | `agentic-doc-updater` | daily | keeps docs in sync with code changes |
 | `agentic-repo-status` | daily | upbeat repo status report issue |
+| `agentic-security-review` | PR, weekly | inline security review of PRs; weekly repo scan issue |
+| `agentic-idea-suggester` | weekly, `/ideas` | proposes 3 new well-scoped feature issues |
 | `agentic-cost-tracker` | after agent runs | AI credit spend report |
 
 ### Authentication
