@@ -16,17 +16,22 @@ Entries are stored in `data/entries.json` (git-ignored). Seed foods are in `data
 
 ## Agentic workflows
 
-Sources are `.github/workflows/*.md`; compiled `*.lock.yml` files are generated, never edit them. Recompile with `gh aw compile`.
+Sources are `.github/workflows/agentic-*.md`; compiled `*.lock.yml` files are generated, never edit them. Recompile with `gh aw compile`.
+Slash commands are routed by `agentic_commands.yml` (generated).
 
-| Stage | Workflow | Trigger | Output |
-|---|---|---|---|
-| Idea | `idea-triager` | issue opened | labels + acceptance criteria comment |
-| Design | `spec-writer` | `/spec` comment | spec comment, `spec-ready` label |
-| Build | `issue-implementer` | `/implement` comment | draft PR with code, tests, docs |
-| Review | `calorie-math-reviewer` | PR opened/updated | inline review on kcal math, units, rounding, validation |
-| Data | `nutrition-data-auditor` | daily | one grouped issue of bad nutrition data |
-| Ops | `ci-doctor` | CI fails | root-cause comment or issue |
-| Docs/Report | `docs-and-weekly-report` | weekly | README-sync PR + weekly report issue |
+| Workflow | Trigger | What it does |
+|---|---|---|
+| `agentic-issue-triage` | issue opened | labels, type, duplicates, triage report |
+| `agentic-repo-assist` | 2x daily, `/repo-assist` | maintainer assistant: triage, fix issues, improvement PRs |
+| `agentic-issue-monster` | schedule | dispatches ready issues to the Copilot coding agent |
+| `agentic-plan` | daily | roadmap/plan issue from open work |
+| `agentic-pr-fix` | `/pr-fix` | fixes failing CI on a PR and pushes to its branch |
+| `agentic-ci-doctor` | CI fails | root-cause comment or issue |
+| `agentic-daily-test-improver` | daily, `/test-assist` | finds coverage gaps, adds tests |
+| `agentic-daily-perf-improver` | daily, `/perf-assist` | finds and benchmarks perf fixes |
+| `agentic-doc-updater` | daily | keeps docs in sync with code changes |
+| `agentic-repo-status` | daily | upbeat repo status report issue |
+| `agentic-cost-tracker` | after agent runs | AI credit spend report |
 
 ### Authentication
 
@@ -36,17 +41,15 @@ billed through the workflow's `GITHUB_TOKEN`. No `COPILOT_GITHUB_TOKEN` secret i
 ### Setup
 
 1. Push to a GitHub repo (the repo owner needs Copilot).
-2. Create labels: `bug feature data question needs-info ready-for-spec spec-ready agent-authored ci documentation report`.
+2. Create labels: `bug feature question needs-info duplicate invalid spam priority/p0 priority/p1 priority/p2 agentic automation report`.
 3. Settings > Actions > General: allow Actions to create pull requests.
 
-### End-to-end demo (about 15 min)
+### Demo
 
-1. Open an issue: "Let users track fiber".  `idea-triager` labels it and writes acceptance criteria.
-2. Comment `/spec`.  A design appears.
-3. Comment `/implement`.  A draft PR appears with tests.
-4. `calorie-math-reviewer` reviews the PR. Try a PR that changes fat to 4 kcal/g to see it flag the formula.
-5. Push a failing test.  `ci-doctor` diagnoses the red build.
-6. Add `{"name":"Mystery bar","per100g":{"kcal":50,"protein":30,"carbs":30,"fat":30}}` to `data/foods.json`, then run `gh aw run nutrition-data-auditor`.
-7. `gh aw run docs-and-weekly-report` for the README sync and weekly report.
+1. Open an issue ("Let users track fiber") and watch `agentic-issue-triage`.
+2. Run `gh aw run agentic-plan` / `agentic-repo-status` for reports.
+3. Comment `/repo-assist implement this` on the issue for a PR attempt.
+4. Open a PR that breaks a test: `agentic-ci-doctor` diagnoses it, `/pr-fix` repairs it.
+5. `/test-assist` and `/perf-assist` for improvement PRs.
 
 Handy: `gh aw status`, `gh aw logs <workflow>`.
