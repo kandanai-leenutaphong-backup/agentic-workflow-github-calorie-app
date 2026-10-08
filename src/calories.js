@@ -1,7 +1,7 @@
 'use strict';
 
 // Atwater factors: kcal per gram of each macronutrient.
-const KCAL_PER_G = { protein: 4, carbs: 4, fat: 9 };
+const KCAL_PER_G = { protein: 4, carbs: 4, fat: 4 };
 
 function round1(n) {
   return Math.round(n * 10) / 10;
