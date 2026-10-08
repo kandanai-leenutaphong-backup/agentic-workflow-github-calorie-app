@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Calorie Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+    form { display: flex; gap: .5rem; margin-bottom: 1rem; }
+    select, input, button { padding: .4rem; font-size: 1rem; }
+    table { width: 100%; border-collapse: collapse; }
+    td, th { text-align: left; padding: .3rem; border-bottom: 1px solid #ddd; }
+    #totals { font-weight: bold; margin: 1rem 0; }
+    #error { color: #b00020; }
+  </style>
+</head>
+<body>
+  <h1>Calorie Tracker</h1>
+  <form id="form">
+    <select id="food"></select>
+    <input id="grams" type="number" min="1" max="5000" value="100" aria-label="grams">
+    <button>Add</button>
+  </form>
+  <p id="error"></p>
+  <div id="totals"></div>
+  <table>
+    <thead><tr><th>Food</th><th>g</th><th>kcal</th><th>P</th><th>C</th><th>F</th><th></th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+  <script>
+    const today = new Date().toISOString().slice(0, 10);
+    const $ = (id) => document.getElementById(id);
+
+    async function load() {
+      const foods = await (await fetch('/api/foods')).json();
+      if (!$('food').options.length) {
+        $('food').innerHTML = foods.map((f) => `<option>${f.name}</option>`).join('');
+      }
+      const { entries, totals } = await (await fetch('/api/entries?date=' + today)).json();
+      $('totals').textContent =
+        `Today: ${totals.kcal} kcal | P ${totals.protein}g | C ${totals.carbs}g | F ${totals.fat}g`;
+      $('rows').innerHTML = '';
+      for (const e of entries) {
+        const tr = document.createElement('tr');
+        [e.food, e.grams, e.kcal, e.protein, e.carbs, e.fat].forEach((v) => {
+          const td = document.createElement('td');
+          td.textContent = v;
+          tr.appendChild(td);
+        });
+        const del = document.createElement('button');
+        del.textContent = 'x';
+        del.onclick = async () => { await fetch('/api/entries/' + e.id, { method: 'DELETE' }); load(); };
+        const td = document.createElement('td');
+        td.appendChild(del);
+        tr.appendChild(td);
+        $('rows').appendChild(tr);
+      }
+    }
+
+    $('form').onsubmit = async (ev) => {
+      ev.preventDefault();
+      const res = await fetch('/api/entries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ food: $('food').value, grams: $('grams').value, date: today }),
+      });
+      $('error').textContent = res.ok ? '' : (await res.json()).error;
+      load();
+    };
+    load();
+  </script>
+</body>
+</html>

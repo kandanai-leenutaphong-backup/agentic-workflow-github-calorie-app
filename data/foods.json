@@ -1,0 +1,8 @@
+[
+  { "name": "Apple", "per100g": { "kcal": 52, "protein": 0.3, "carbs": 14, "fat": 0.2 } },
+  { "name": "Banana", "per100g": { "kcal": 89, "protein": 1.1, "carbs": 23, "fat": 0.3 } },
+  { "name": "Chicken breast", "per100g": { "kcal": 165, "protein": 31, "carbs": 0, "fat": 3.6 } },
+  { "name": "White rice (cooked)", "per100g": { "kcal": 130, "protein": 2.7, "carbs": 28, "fat": 0.3 } },
+  { "name": "Egg", "per100g": { "kcal": 143, "protein": 12.6, "carbs": 0.7, "fat": 9.5 } },
+  { "name": "Olive oil", "per100g": { "kcal": 884, "protein": 0, "carbs": 0, "fat": 100 } }
+]

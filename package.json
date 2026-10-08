@@ -1,0 +1,12 @@
+{
+  "name": "calorie-app",
+  "version": "0.1.0",
+  "description": "Tiny local calorie tracker used to demo GitHub Agentic Workflows",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": { "node": ">=20" },
+  "license": "MIT"
+}
