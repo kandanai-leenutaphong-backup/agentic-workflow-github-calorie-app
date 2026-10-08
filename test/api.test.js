@@ -30,9 +30,18 @@ test('add, list and delete an entry', async (t) => {
   assert.equal(res.status, 201);
   const entry = await res.json();
   assert.equal(entry.kcal, 330);
+  assert.equal(entry.fiber, 0);
+
+  const fiberRes = await fetch(`${base}/api/entries`, {
+    method: 'POST', headers: json,
+    body: JSON.stringify({ food: 'Apple', grams: 150, date: '2025-01-01' }),
+  });
+  const fiberEntry = await fiberRes.json();
+  assert.equal(fiberEntry.fiber, 3.6);
 
   const list = await (await fetch(`${base}/api/entries?date=2025-01-01`)).json();
-  assert.equal(list.totals.kcal, 330);
+  assert.equal(list.totals.kcal, 408);
+  assert.equal(list.totals.fiber, 3.6);
 
   assert.equal((await fetch(`${base}/api/entries/${entry.id}`, { method: 'DELETE' })).status, 204);
 });

@@ -24,7 +24,7 @@
   <p id="error"></p>
   <div id="totals"></div>
   <table>
-    <thead><tr><th>Food</th><th>g</th><th>kcal</th><th>P</th><th>C</th><th>F</th><th></th></tr></thead>
+    <thead><tr><th>Food</th><th>g</th><th>kcal</th><th>P</th><th>C</th><th>F</th><th>Fiber</th><th></th></tr></thead>
     <tbody id="rows"></tbody>
   </table>
   <script>
@@ -38,11 +38,11 @@
       }
       const { entries, totals } = await (await fetch('/api/entries?date=' + today)).json();
       $('totals').textContent =
-        `Today: ${totals.kcal} kcal | P ${totals.protein}g | C ${totals.carbs}g | F ${totals.fat}g`;
+        `Today: ${totals.kcal} kcal | P ${totals.protein}g | C ${totals.carbs}g | F ${totals.fat}g | Fiber ${totals.fiber}g`;
       $('rows').innerHTML = '';
       for (const e of entries) {
         const tr = document.createElement('tr');
-        [e.food, e.grams, e.kcal, e.protein, e.carbs, e.fat].forEach((v) => {
+        [e.food, e.grams, e.kcal, e.protein, e.carbs, e.fat, e.fiber].forEach((v) => {
           const td = document.createElement('td');
           td.textContent = v;
           tr.appendChild(td);

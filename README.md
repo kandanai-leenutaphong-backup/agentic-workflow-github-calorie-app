@@ -13,6 +13,8 @@ npm test
 
 API: `GET /api/foods`, `GET /api/entries?date=YYYY-MM-DD`, `POST /api/entries {food, grams, date?}`, `DELETE /api/entries/:id`.
 Entries are stored in `data/entries.json` (git-ignored). Seed foods are in `data/foods.json` (per 100 g).
+Each food's `per100g` may include a `fiber` value (grams); entries and daily totals include a scaled
+`fiber` field alongside kcal/protein/carbs/fat, with missing/legacy fiber treated as `0`.
 
 ## Agentic workflows
 
