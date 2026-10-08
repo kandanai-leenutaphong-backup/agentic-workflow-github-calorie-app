@@ -52,7 +52,7 @@
 name: "Docs Sync and Weekly Report"
 on:
   schedule:
-    - cron: "9 19 * * 0"  # Friendly format: weekly (scattered)
+    - cron: "7 20 * * 1"  # Friendly format: weekly (scattered)
   workflow_dispatch:
     inputs:
       aw_context:
