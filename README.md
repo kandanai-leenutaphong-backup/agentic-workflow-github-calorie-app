@@ -34,6 +34,7 @@ Slash commands are routed by `agentic_commands.yml` (generated).
 | `agentic-security-review` | PR, weekly | inline security review of PRs; weekly repo scan issue |
 | `agentic-idea-suggester` | weekly, `/ideas` | proposes 3 new well-scoped feature issues |
 | `agentic-deep-research` | weekly, `/research` | reads prod telemetry + repo, files `cookie` issues |
+| `agentic-stale-pr-nudge` | daily, `/nudge` | diagnoses what each stale PR waits on, posts one nudge + label, digest issue |
 | `agentic-cost-tracker` | after agent runs | AI credit spend report |
 
 ### Research - Assign - Observe feedback loop
